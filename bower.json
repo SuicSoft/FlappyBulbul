@@ -1,0 +1,29 @@
+{
+  "name": "Flappy Bulbul",
+  "homepage": "https://github.com/SuicSoft/FlappyBulbul",
+  "authors": [
+    "Suici Doga <suiciwd@gmail.com>"
+  ],
+  "description": "A FREE and open source multiplayer flappy bird game",
+  "main": "index.html",
+  "keywords": [
+    "game",
+    "bird",
+    "multiplayer"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.4.0",
+    "paper-button": "PolymerElements/paper-button#^1.0.11",
+    "iron-form": "PolymerElements/iron-form#^1.0.16",
+    "paper-input": "PolymerElements/paper-input#^1.1.11"
+  }
+}
