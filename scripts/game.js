@@ -30,20 +30,24 @@ if (game.device.desktop == false) {
   game.physics.startSystem(Phaser.Physics.ARCADE);
 
   // Display the bird at the position x=100 and y=245
-  this.bird = game.add.sprite(100, 245, 'bird');
-  this.bird = game.add.sprite(50, 145, 'bird');
+  this.bird = [game.add.sprite(100, 245, 'bird'),game.add.sprite(0, 245, 'bird')];
 
-  // Add physics to the bird
-  // Needed for: movements, gravity, collisions, etc.
-  game.physics.arcade.enable(this.bird);
-
-  // Add gravity to the bird to make it fall
-  this.bird.body.gravity.y = 1000;
+  this.bird.forEach(function(entry) {
+    // Add physics to the bird
+    // Needed for: movements, gravity, collisions, etc.
+    game.physics.arcade.enable(entry);
+    // Add gravity to the bird to make it fall
+    entry.body.gravity.y = 1000;
+    entry.anchor.setTo(-0.2, 0.5);
+  });
 
   // Call the 'jump' function when the spacekey is hit
   var spaceKey = game.input.keyboard.addKey(
                   Phaser.Keyboard.SPACEBAR);
   spaceKey.onDown.add(this.jump, this);
+  var spaceKey = game.input.keyboard.addKey(
+                  Phaser.Keyboard.UP);
+  spaceKey.onDown.add(this.jump2, this);
 
   // Create an empty group
   this.pipes = game.add.group();
@@ -53,7 +57,7 @@ if (game.device.desktop == false) {
   this.labelScore = game.add.text(20, 20, "0", { font: "30px Arial", fill: "#ffffff" });
 
   // Move the anchor to the left and downward
-  this.bird.anchor.setTo(-0.2, 0.5);
+
   this.jumpSound = game.add.audio('jump');
 
   // Call the 'jump' function when we tap/click on the screen
@@ -63,19 +67,36 @@ if (game.device.desktop == false) {
 update: function() {
     // If the bird is out of the screen (too high or too low)
     // Call the 'restartGame' function
-    if (this.bird.y < 0 || this.bird.y > 490)
+    if (this.bird[0].y < 0 || this.bird[0].y > 490)
         this.restartGame();
 
-    game.physics.arcade.overlap(this.bird, this.pipes, this.hitPipe, null, this);
-    if (this.bird.angle < 20)
-      this.bird.angle += 1;
+    game.physics.arcade.overlap(this.bird[0], this.pipes, this.hitPipe, null, this);
+    if (this.bird[0].angle < 20)
+      this.bird[0].angle += 1;
+
+      // If the bird is out of the screen (too high or too low)
+      // Call the 'restartGame' function
+      if (this.bird[1].y < 0 || this.bird[0].y > 490)
+          this.restartGame();
+
+      game.physics.arcade.overlap(this.bird[1], this.pipes, this.hitPipe, null, this);
+      if (this.bird[1].angle < 20)
+        this.bird[1].angle += 1;
 },
 jump: function() {
-    if (this.bird.alive == false)
+    if (this.bird[0].alive == false)
       return;
     // Add a vertical velocity to the bird
-    this.bird.body.velocity.y = -350;
-    game.add.tween(this.bird).to({angle: -20}, 100).start();
+    this.bird[0].body.velocity.y = -350;
+    game.add.tween(this.bird[0]).to({angle: -20}, 100).start();
+    this.jumpSound.play();
+},
+jump2: function() {
+    if (this.bird[1].alive == false)
+      return;
+    // Add a vertical velocity to the bird
+    this.bird[1].body.velocity.y = -350;
+    game.add.tween(this.bird[1]).to({angle: -20}, 100).start();
     this.jumpSound.play();
 },
 restartGame: function() {
@@ -115,11 +136,17 @@ this.labelScore.text = this.score;
 hitPipe: function() {
     // If the bird has already hit a pipe, do nothing
     // It means the bird is already falling off the screen
-    if (this.bird.alive == false)
+    if (this.bird[0].alive == false)
         return;
 
     // Set the alive property of the bird to false
-    this.bird.alive = false;
+    this.bird[0].alive = false;
+
+    if (this.bird[1].alive == false)
+        return;
+
+    // Set the alive property of the bird to false
+    this.bird[1].alive = false;
 
     // Prevent new pipes from appearing
     game.time.events.remove(this.timer);
